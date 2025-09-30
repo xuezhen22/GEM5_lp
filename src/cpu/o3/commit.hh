@@ -101,6 +101,23 @@ class ThreadState;
 class Commit
 {
   public:
+    // ***** loop branch ***** //
+    // count loop branch in program
+    struct LpBrCntEntry {
+      uint32_t tag;
+      int commitNum;
+      int mispredNum;
+      int age;
+
+      LpBrCntEntry() : tag(0), commitNum(0), mispredNum(0), age(0) {}
+    };
+    int loopBrCntTabEntryNum = 1024;
+    LpBrCntEntry loopBrCntTable[1024];
+    bool isInLpBrTab(Addr brPC, int &idx, LpBrCntEntry &entry);
+    bool isAllocInLpBrTab(int &allocIdx);
+    bool isBackJmpBr(Addr brPC, Addr target);
+    // ***** loop branch ***** //
+
     /** Overall commit status. Used to determine if the CPU can deschedule
      * itself due to a lack of activity.
      */

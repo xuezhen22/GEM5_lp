@@ -198,9 +198,38 @@ Commit::Commit(CPU *_cpu, branch_prediction::BPredUnit *_bp, const BaseO3CPUPara
 
     cpu->schedule(stuckCheckEvent,
                    cpu->clockEdge(Cycles(40000)));
+    // ***** loop branch ***** //
+    // init
+    for(int a = 0; a < loopBrCntTabEntryNum; a++) {
+        loopBrCntTable[a] = LpBrCntEntry();
+    }
+    // ***** loop branch ***** //
 }
 
 std::string Commit::name() const { return cpu->name() + ".commit"; }
+
+// ***** loop branch ***** //
+
+bool
+Commit::isInLpBrTab(Addr brPC, int &idx, LpBrCntEntry &entry) {
+  for(int a = 0; a < loopBrCntTabEntryNum; a++) {
+    if(loopBrCntTable[a].tag == brPC) {
+      idx = a;
+      entry = loopBrCntTable[a];
+      return true;
+    }
+  }
+
+  idx   = 0;
+  entry = LpBrCntEntry();
+  return false;
+}
+
+bool
+Commit::isBackJmpBr(Addr brPC, Addr target) {
+  return (brPC < target);
+}
+// ***** loop branch ***** //
 
 void
 Commit::regProbePoints()
