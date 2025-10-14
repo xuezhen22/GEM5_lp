@@ -1247,14 +1247,22 @@ Commit::commitInsts()
                 int crtLpTabIdx = 0;
                 LpBrCntEntry crtLpEntry = LpBrCntEntry();
                 bool isInLpTab = isInLpBrTab(commitPC, crtLpTabIdx, crtLpEntry);
+                bool isMispred = head_inst->mispredicted();
                 // store back-jmp-br into loopBrCntTable & update
                 if(isBkJmpBr) {
                   if(isInLpTab) { // update
+                    loopBrCntTable[crtLpTabIdx].commitNum = crtLpEntry.commitNum++;
+                    if(isMispred) {
+                      loopBrCntTable[crtLpTabIdx].mispredNum = crtLpEntry.mispredNum++;
+                    }
                     loopBrCntTable[crtLpTabIdx].age = crtLpEntry.age++;
                   } else {
                     int allocIdx = getAllocInLpBrTabIdx();
                     loopBrCntTable[allocIdx] = LpBrCntEntry(commitPC);
                     // update
+                    if(isMispred) {
+                      loopBrCntTable[allocIdx].mispredNum = 1;
+                    }
                   }
                 }
                 // ***** loop branch ***** //
