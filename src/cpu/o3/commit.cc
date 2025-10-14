@@ -225,6 +225,26 @@ Commit::isInLpBrTab(Addr brPC, int &idx, LpBrCntEntry &entry) {
   return false;
 }
 
+int
+Commit::getAllocInLpBrTabIdx() {
+  int allocIdx = 0;
+
+  int minAge    = loopBrCntTable[0].age;
+  int minAgeIdx = 0;
+  for(int a = 1; a < loopBrCntTabEntryNum; a++) {
+    if(loopBrCntTable[a].age == 0) {
+      return a;
+    } else {
+      if(loopBrCntTable[a].age < minAge) {
+        minAge    = loopBrCntTable[a].age;
+        minAgeIdx = a;
+      }
+    }
+  }
+
+  return minAgeIdx;
+}
+
 bool
 Commit::isBackJmpBr(Addr brPC, Addr target) {
   return (brPC < target);
@@ -1219,6 +1239,26 @@ Commit::commitInsts()
             bool commit_success = commitHead(head_inst, num_committed);
 
             if (commit_success) {
+                // ***** loop branch ***** //
+                const auto &head_rv_pc_lp = head_inst->pcState().as<RiscvISA::PCState>();
+                Addr brTarget = head_rv_pc_lp.npc();
+                Addr commitPC = head_inst->pcState().instAddr();
+                bool isBkJmpBr = head_inst->isCondCtrl() && isBackJmpBr(commitPC, brTarget);
+                int crtLpTabIdx = 0;
+                LpBrCntEntry crtLpEntry = LpBrCntEntry();
+                bool isInLpTab = isInLpBrTab(commitPC, crtLpTabIdx, crtLpEntry);
+                // store back-jmp-br into loopBrCntTable & update
+                if(isBkJmpBr) {
+                  if(isInLpTab) { // update
+                    loopBrCntTable[crtLpTabIdx].age = crtLpEntry.age++;
+                  } else {
+                    int allocIdx = getAllocInLpBrTabIdx();
+                    loopBrCntTable[allocIdx] = LpBrCntEntry(commitPC);
+                    // update
+                  }
+                }
+                // ***** loop branch ***** //
+
                 cpu->perfCCT->updateInstPos(head_inst->seqNum, PerfRecord::AtCommit);
                 cpu->perfCCT->commitMeta(head_inst->seqNum);
                 head_inst->printDisassemblyAndResult(cpu->name());

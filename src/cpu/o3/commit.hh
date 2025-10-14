@@ -107,14 +107,16 @@ class Commit
       uint32_t tag;
       int commitNum;
       int mispredNum;
-      int age;
+      int age; // init as 0; increase once accessed; reset every 10000 commit insts
 
       LpBrCntEntry() : tag(0), commitNum(0), mispredNum(0), age(0) {}
+      LpBrCntEntry(uint32_t tag) : // allocate
+        tag(tag), commitNum(1), mispredNum(0), age(1) {}
     };
     int loopBrCntTabEntryNum = 1024;
     LpBrCntEntry loopBrCntTable[1024];
     bool isInLpBrTab(Addr brPC, int &idx, LpBrCntEntry &entry);
-    bool isAllocInLpBrTab(int &allocIdx);
+    int getAllocInLpBrTabIdx(); // find the min age entry to allocate
     bool isBackJmpBr(Addr brPC, Addr target);
     // ***** loop branch ***** //
 
