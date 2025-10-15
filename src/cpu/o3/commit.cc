@@ -188,6 +188,23 @@ Commit::Commit(CPU *_cpu, branch_prediction::BPredUnit *_bp, const BaseO3CPUPara
         simout.close(out_handle);
     });
 
+    // ***** loop branch ***** //
+    registerExitCallback([this]() {
+        auto the_handle = simout.create("loop_branch.txt", false, true);
+        // *the_handle->stream() << std::dec << "indirect-num: " << indirectNum << std::endl;
+        for (int a = 0; a < loopBrCntTabEntryNum; a++) {
+            if(loopBrCntTable[a].commitNum >= 16) {
+              *the_handle->stream() << std::hex << \
+              "pc: " << loopBrCntTable[a].tag << std::dec << \
+              "; commit-cnt: " << loopBrCntTable[a].commitNum << \
+              "; mispred-cnt: " << loopBrCntTable[a].mispredNum << \
+              "; age " << loopBrCntTable[a].age << std::endl;
+            }
+        }
+        simout.close(the_handle);
+    });
+    // ***** loop branch ***** //
+
     faultNum.insert(RiscvISA::ExceptionCode::LOAD_PAGE);
     faultNum.insert(RiscvISA::ExceptionCode::STORE_PAGE);
     faultNum.insert(RiscvISA::ExceptionCode::INST_PAGE);
