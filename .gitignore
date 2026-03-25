@@ -69,4 +69,6 @@ AGENTS.md
 
 microbench/build/
 microbench/output/
-microbench/dramsim3*
+microbench/dramsim3*# pixi environments
+.pixi/*
+!.pixi/config.toml

@@ -1,0 +1,12 @@
+[workspace]
+authors = ["xuezhen <zxue@tju.edu.cn>"]
+channels = ["conda-forge"]
+name = "my_indi"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+scons = ">=4.10.1,<5"
+python = ">=3.14.3,<3.15"
