@@ -118,3 +118,6 @@ test_traces/*.bin
 # Recycle bin (track folder, ignore contents)
 .recycle_bin/*
 !.recycle_bin/.gitkeep
+# pixi environments
+.pixi/*
+!.pixi/config.toml
