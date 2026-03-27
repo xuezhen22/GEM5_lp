@@ -118,7 +118,7 @@ def build_test_system(np, args):
         args.difftest_ref_so = ref_so
 
         # Trace mode FS configuration with functional TLB - bootloader needed but no checkpoint
-        test_sys.workload.bootloader = '/nfs/home/goulingrui/project/riscv-environments/riscv-pk/build/bbl'
+        test_sys.workload.bootloader = '/nfs/home/xuezhen/pro/my_gem5_indi/trace/bbl'
         test_sys.workload.xiangshan_cpt = False  # No checkpoint in trace mode
         test_sys.restore_from_gcpt = False       # Disable GCPT restoration
         
