@@ -52,7 +52,7 @@ def run(
 
 
 def ssh(host: str, remote_cmd: str, timeout: int = 10) -> Tuple[int, str, str]:
-    full = ["ssh", "-o", "BatchMode=yes", host, remote_cmd]
+    full = ["ssh", "-o", "BatchMode=yes", "-o", "ProxyCommand=none", host, remote_cmd]
     proc = run(full, capture=True, timeout=timeout)
     return proc.returncode, proc.stdout.strip(), proc.stderr.strip()
 
