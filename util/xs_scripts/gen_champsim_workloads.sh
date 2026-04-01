@@ -61,7 +61,7 @@ echo "Generating workload list from ${TRACE_ROOT} into ${OUTPUT_LIST}" >&2
         name=${rel_prefix//\//_}
 
         # skip 0, warmup 50M, detailed warmup 0, sample 50M
-        echo "${name}  ${rel_prefix}  0 50000000 0 50000000"
+        echo "${name}  ${rel_prefix}  0 50000000 0 100000000"
     done
 } > "${OUTPUT_LIST}"
 
